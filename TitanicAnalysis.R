@@ -26,17 +26,34 @@ View(b)
 
 #In January
 c<-filter(flights,flights$month==1)
+cc <- filter(flights, flights$time_hour<"2013-02-01")
 View(c)
+View(cc)
 
 #Delayed by more than an hour
-d<-filter(flights,flights$dep_delay>60)
+d<-filter(flights,dep_delay>60)
 View(d)
 
 #Departure between midnight and five am
-e<-filter(flights,flights$dep_time )
+e<-filter(flights,flights$dep_time >=0 & flights$dep_time <=5)
 View(e)
 
 #Delayed by more than an hour
 f<-filter(flights,flights$arr_delay>2*flights$dep_delay)
 View(f)
+
+#usage of select
+?select()
+select(flights,dep_delay)
+select(flights,starts_with("sched",ignore.case = TRUE))
+select(flights,ends_with("time",ignore.case = TRUE))
+select(flights,contains("delay",ignore.case = TRUE))
+select(flights,matches("_",ignore.case = TRUE))
+#select(flights,num_range("sched",1:5,width=2))
+select(flights,one_of("carrier","month", "hour", ignore.case = TRUE))
+select(flights,everything())
+select(flights,-year) %>% select(.,-month)
+
+
+
 
