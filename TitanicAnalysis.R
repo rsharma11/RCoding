@@ -54,6 +54,34 @@ select(flights,one_of("carrier","month", "hour", ignore.case = TRUE))
 select(flights,everything())
 select(flights,-year) %>% select(.,-month)
 
+#usage of arrange
+#Which flights were most delayed (N384HA)
+arrange(flights,desc(dep_delay))
+arrange(flights,desc(arr_delay))
+
+#Which flights caught up the most time during the flight
+arrange(flights,desc(dep_delay - arr_delay))
+
+#Order the flights by departure date and time
+arrange(flights, day, hour, minute)
+
+#usage of mutate
+#compute speed
+
+flights %>%  
+    mutate(time_in_min=hour*60+minute,
+           speed = distance/time_in_min) %>% 
+    select(tailnum, speed) %>% 
+    arrange(desc(speed)) %>% 
+    .[1,]
+    
+#time made up or lost
+flights %>% 
+  mutate(delta=dep_delay-arr_delay)
+
+
+#compute hour and minute from dep
+
 
 
 
