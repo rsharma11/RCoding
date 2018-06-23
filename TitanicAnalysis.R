@@ -86,4 +86,30 @@ flights %>%
   mutate(hour=dep_time%/%100,
          minute=dep_time%%100)
 
-#
+#usage of summary
+
+flights %>%
+  group_by(origin) %>% 
+  filter(!is.na(dep_time)) %>% 
+  summarise(total=sum(dep_delay)) %>% 
+  system.time()
+
+#data table style
+flights[!is.na(dep_time), sum(dep_delay) , by =origin] %>%  system.time()
+
+#1
+flights %>% 
+  filter(!is.na(arr_delay)) %>% 
+  select(dest,arr_delay) %>% 
+  group_by(dest) %>% 
+  summarise(mean=mean(arr_delay), n=n()) %>%
+  arrange(desc(mean))
+
+#2
+flights %>%
+  select(year,month,day,carrier,flight)) %>%
+  merge(year,flight)
+ 
+#3
+
+  
