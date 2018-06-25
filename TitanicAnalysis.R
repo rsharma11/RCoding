@@ -106,10 +106,18 @@ flights %>%
   arrange(desc(mean))
 
 #2
+#flights =flights %>% as_tibble()
+
 flights %>%
-  select(year,month,day,carrier,flight)) %>%
-  merge(year,flight)
+  mutate(carrier_flight = paste0(carrier,flight)) %>% 
+  select(day,carrier_flight,dest) %>%
+  filter(day>=1)
  
 #3
 
-  
+
+con <- DBI::dbConnect(RMySQL::MySQL(), 
+host = "localhost",
+user = "root",
+password = rstudioapi::askForPassword("Database password")
+)  
