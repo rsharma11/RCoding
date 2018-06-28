@@ -113,11 +113,8 @@ flights %>%
   select(day,carrier_flight,dest) %>%
   filter(day>=1)
  
-#3
+#min_rank, row_number, dense_rank
 
-
-con <- DBI::dbConnect(RMySQL::MySQL(), 
-host = "localhost",
-user = "root",
-password = rstudioapi::askForPassword("Database password")
-)  
+flights %>% group_by(carrier) %>% filter(min_rank(desc(arr_delay)) <=2)
+flights %>% group_by(carrier) %>% filter(row_number(desc(arr_delay)) <=2)
+flights %>% group_by(carrier) %>% filter(dense_rank(desc(arr_delay)) <=2)
