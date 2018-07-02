@@ -9,6 +9,7 @@ x = as.list(c(1:10))
 y = as.list(c(1:10))
 z = as.list(c(1:10))
 
+library(dplyr)
 library(purrr)
 y_sqrt = map(y,sqrt)
 
@@ -38,4 +39,36 @@ sum3 <- function(x, y, z) {
 
 listoflist = list(x,y,z)
 y_sum = pmap(listoflist, sum3)
+
+#### Assignment 1: Create function to calculate average delay provided flight
+View(flights)
+df <- data_frame(flights)
+group_by(flights,origin)
+select()
+
+
+
+
+tidy_output =flights %>% 
+                na.omit() %>% 
+                select(tailnum, dep_delay) %>% 
+                 group_by(tailnum) %>% 
+                 summarise(Avg_delay = mean(dep_delay))
+
+
+avgDelay  <- function(one.tailnum){
+result = flights %>% 
+          na.omit() %>% 
+          select(tailnum, dep_delay) %>% 
+          filter(tailnum == one.tailnum) %>% 
+          mutate(AvgDelay  = mean(dep_delay)) 
+          
+  return(result$AvgDelay %>%  unique())
+}
+
+allTailNum = flights$tailnum %>%  unique()
+delay_output  =map(allTailNum,avgDelay) 
+
+func_output = data.frame(tailnum  = allTailNum,
+                        Avg_delay =as.vector(delay_output))
 
