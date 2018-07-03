@@ -1,5 +1,8 @@
 #### This file will contain function from purrr
 
+install.packages("tidyverse")
+library(dplyr)
+library(hflights)
 n = c(2, 3, 5) 
 s = c("aa", "bb", "cc", "dd", "ee") 
 b = c(TRUE, FALSE, TRUE, FALSE, FALSE) 
@@ -12,8 +15,8 @@ z = as.list(c(1:10))
 library(dplyr)
 library(purrr)
 y_sqrt = map(y,sqrt)
-
-
+flights <- as_tibble(hflights)
+View(flights)
 
 # write a function to get square of a value
 sqr <- function(x) {
@@ -40,8 +43,51 @@ sum3 <- function(x, y, z) {
 listoflist = list(x,y,z)
 y_sum = pmap(listoflist, sum3)
 
-#### Assignment 1: Create function to calculate average delay provided flight
-View(flights)
+#### Assignment 1: calculate average departure delay for each carrier
+
+avgDeptDelay  <- function(){
+
+avgDepDelay <- flights %>% 
+                  na.omit() %>% 
+                  select(UniqueCarrier,DepDelay) %>% 
+                  group_by(UniqueCarrier) %>% 
+                  summarise(avgDel = mean(DepDelay))
+  
+  return(avgDepDelay)
+  
+}
+
+# Function to get avg dept delay
+#' @description Function to get avg dept delay
+#' @param carrierName Unique identifier of carrier
+#' @return a tibble with Unique identifier and avg delay
+
+avgDeptDelayByName  <- function(carrierName){
+  
+  avGDepDelay <- flights %>% 
+                  na.omit() %>% 
+                  filter(UniqueCarrier == carrierName) %>% 
+                  select(UniqueCarrier,DepDelay) %>% 
+                  group_by(UniqueCarrier) %>% 
+                  summarise(avgDel = mean(DepDelay))
+  
+  return(avGDepDelay)
+  
+}
+
+# creating a list of unique carrier
+
+carrierList <- flights %>% 
+                  select(UniqueCarrier) %>% 
+                  unique() 
+
+       
+
+test  =map(carrierList,avgDeptDelayByName)
+
+
+
+
 df <- data_frame(flights)
 group_by(flights,origin)
 select()
@@ -66,7 +112,7 @@ result = flights %>%
   return(result$AvgDelay %>%  unique())
 }
 
-allTailNum = flights$tailnum %>%  unique()
+allTailNum = flights$TailNum %>%  unique()
 delay_output  =map(allTailNum,avgDelay) 
 
 func_output = data.frame(tailnum  = allTailNum,
