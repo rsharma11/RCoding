@@ -1,2 +1,2 @@
 # RCoding
-Learnign R coding
+Learning R coding
