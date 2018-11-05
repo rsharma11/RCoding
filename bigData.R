@@ -9,3 +9,5 @@ air <- src_postgres(
   user = '',
   password = 'imacpassword123$'
 )
+
+#Reading the data
