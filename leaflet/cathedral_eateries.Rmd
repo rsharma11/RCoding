@@ -1,0 +1,58 @@
+---
+title: "Cathedral_Eataries"
+author: "Ranu"
+date: "7/31/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r loading libraries}
+library(leaflet)
+library(tidyverse)
+library(DataExplorer)
+```
+
+## Reading files and data exploration steps
+
+You can also embed plots, for example:
+
+```{r reading files, echo=FALSE}
+setwd("/Applications/Ranu_Imp_Skill_docs/Focus/RCoding/leaflet/")
+cathedrals <- read.csv(file = "imbibit_cathedrals.csv")
+eateries <- read.csv(file = "imbibit_eateries.csv")
+pubs <- read.csv(file = "imbibit_pubs.csv")
+```
+
+```{r create report, echo=FALSE}
+
+#DataExplorer::create_report(cathedrals)
+#DataExplorer::create_report(eateries)
+#DataExplorer::create_report(pubs)
+
+```
+
+
+```{r getting the map, echo=FALSE}
+
+webmap <- leaflet() %>%  #creates object webmap, which is a leaflet object
+  addTiles() %>%         #tiles added
+  
+  addCircleMarkers(lng = cathedrals$Cathedral.Longitude, lat = cathedrals$Cathedral.Latitude, color = "firebrick", weight = 8, label = cathedrals$Cathedral.Full.Title, popup = paste(cathedrals$Cathedral.Website, cathedrals$Cathedral.Postcode)) %>% 
+  
+  addCircleMarkers(lng = eateries$Eatery.Longitude, lat = eateries$Eatery.Latitude, color = "blue", weight = 8, label = eateries$Eatery.Name, popup = paste(eateries$Eatery.Description, eateries$Eatery.Website)) %>% 
+
+addCircleMarkers(lng = pubs$Pob.Longitude, pubs$Pub.Latitude, color = "green", weight = 8, label = pubs$Pub.Name, popup = paste(pubs$Pub.Description, pubs$Pub.Website))
+
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
