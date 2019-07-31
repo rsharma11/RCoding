@@ -1,0 +1,118 @@
+---
+title: "US_Natural_Calamity_Data"
+author: "Ranu"
+date: "7/31/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+DATA: The U.S. National Oceanic and Atmospheric Administration’s (NOAA) storm database.
+
+This database tracks characteristics of major storms and weather events in the United States, including when and where they occur, as well as estimates of any fatalities, injuries, and property damage.
+
+The analysis answers the following two questions:
+Across the United States, which types of events are most harmful with respect to population health?
+Across the United States, which types of events have the greatest economic consequences?
+
+```{r loading library}
+library(tidyverse)
+library(data.table)
+```
+
+```{r reading file}
+storm_data <- read.csv(file = "/Applications/Ranu_Imp_Skill_docs/Focus/RCoding/repdata_data_StormData.csv")
+storm_data <- storm_data %>% as.tibble()
+```
+
+Across the United States, which types of events are most harmful with respect to population health?
+
+```{r selecting important columns, echo=FALSE}
+
+selected_columns <- storm_data %>% 
+                      select(EVTYPE, FATALITIES, INJURIES)
+final_data <- selected_columns %>%   
+  group_by(EVTYPE) %>% 
+  summarise_all(funs(sum)) %>% 
+  mutate(total_population_damage = FATALITIES + INJURIES) %>% 
+  arrange(desc(total_population_damage)) 
+
+  DT::datatable(final_data, filter = "top")
+
+```
+
+## Including Plots
+
+Across the United States, which types of events are most harmful with respect to population health?
+
+```{r compare the calamaties by plotting, echo=FALSE}
+
+final_data %>%         
+  head(n=10) %>% 
+  ggplot(aes(x= reorder(EVTYPE, -FATALITIES), y=FATALITIES))+
+  geom_bar(stat="identity", fill="orange")+coord_flip()+xlab("EVTYPE")+ggtitle("Fatalities by top 10 Weather Event Types")
+```
+
+```{r selecting important columns for property damage, echo=FALSE}
+
+economic_selected_columns <- storm_data %>% 
+                      select(EVTYPE, PROPDMG, PROPDMGEXP, CROPDMG, CROPDMGEXP)
+
+table(economic_selected_columns$PROPDMGEXP)
+
+cleaned_data1 <- economic_selected_columns %>% 
+  mutate(PROPDAMAGE = ifelse(economic_selected_columns$PROPDMGEXP == "H", PROPDMG*100, 
+                ifelse(economic_selected_columns$PROPDMGEXP == "K", PROPDMG*1000,
+                ifelse(economic_selected_columns$PROPDMGEXP == "M", PROPDMG*1000000,              
+                ifelse(economic_selected_columns$PROPDMGEXP == "B", PROPDMG*1000000000, 0              
+                              )))))
+
+cleaned_data <- cleaned_data1 %>% 
+  mutate(CROPDAMAGE = ifelse(cleaned_data1$CROPDMGEXP == "H", CROPDMG*100, 
+                ifelse(cleaned_data1$CROPDMGEXP == "K", CROPDMG*1000,
+                ifelse(cleaned_data1$CROPDMGEXP == "M", CROPDMG*1000000,              
+                ifelse(cleaned_data1$CROPDMGEXP == "B", CROPDMG*1000000000, 0              
+                              )))))
+
+final_data2 <- cleaned_data %>% 
+  select(EVTYPE, PROPDAMAGE, CROPDAMAGE) %>% 
+  group_by(EVTYPE) %>% 
+  summarise_all(funs(sum)) %>% 
+  mutate(total_economic_damage = PROPDAMAGE + CROPDAMAGE) %>% 
+  arrange(desc(total_economic_damage)) 
+
+  DT::datatable(final_data2, filter = "top")
+
+```
+
+## Including Plots
+
+Across the United States, which types of events are most harmful with respect to population health?
+
+```{r compare the economic damage by plotting, echo=FALSE}
+
+final_data2 %>%         
+  head(n=10) %>% 
+  ggplot(aes(x= reorder(EVTYPE, -total_ecocnomic_damage), y=total_ecocnomic_damage))+
+  geom_bar(stat="identity", fill="orange")+coord_flip()+xlab("EVTYPE")+ggtitle("Fatalities by top 10 Weather Event Types")
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
+
+
+
+
+
+
+
+
+
